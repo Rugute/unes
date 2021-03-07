@@ -1,13 +1,7 @@
 package com.unes.facilitymasterlist.config;
 
-
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.core.Ordered;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.config.BeanIds;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -18,19 +12,13 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.authentication.rememberme.JdbcTokenRepositoryImpl;
 import org.springframework.security.web.authentication.rememberme.PersistentTokenRepository;
-import org.springframework.security.web.firewall.HttpFirewall;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.servlet.ModelAndView;
-import org.springframework.web.servlet.config.annotation.EnableWebMvc;
-import org.springframework.web.servlet.config.annotation.ViewControllerRegistry;
 
 import javax.sql.DataSource;
+
 @Configuration
 @EnableWebSecurity
 @EnableGlobalMethodSecurity(securedEnabled = true, proxyTargetClass = true)
-
 public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
     @Autowired
@@ -73,6 +61,8 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
         tokenRepositoryImpl.setDataSource(dataSource);
         return tokenRepositoryImpl;
     }
+
+
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http.
@@ -82,30 +72,17 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
                 authorizeRequests()
 
-                .antMatchers("/vacancy/createaccount").permitAll()
-                .antMatchers("/vacancy/application").permitAll()
-                .antMatchers("/vacancy/apply").permitAll()
-                .antMatchers("/vacancy/apply/**").permitAll()
-                .antMatchers("/vacancy/openings").permitAll()
-                .antMatchers("/vacancy/download/**").permitAll()
                 .antMatchers("/rest/v1/api/**").permitAll()
                 .antMatchers("/rest/documentation").permitAll()
                 .antMatchers("/rest/resetpassword").permitAll()
                 .antMatchers("/rest/doc").permitAll()
                 .antMatchers("/api.html").permitAll()
                 .antMatchers(AUTH_WHITELIST).permitAll()
-
-                // .antMatchers("/rest/v1/api/token").permitAll()
-                // .antMatchers("/rest/v1/api/checkin").permitAll()
                 .antMatchers("/").permitAll()
-                .antMatchers("/setup").permitAll()
-                .antMatchers("/auth/activate").permitAll()
-                .antMatchers("/auth/login").permitAll()
-                .antMatchers("/auth/cresetpassword").permitAll()
-                .antMatchers("/auth/registration").permitAll()
                 .antMatchers("/auth/admin/**").hasAuthority("SUPERADMIN").anyRequest()
                 .authenticated().and().csrf().disable().formLogin()
-                .loginPage("/auth/login").failureUrl("/auth/login?error=true")
+                //.loginPage("/auth/login").failureUrl("/auth/login?error=true")
+                .loginPage("/rest/v1/api/getfacilities").failureUrl("/auth/login?error=true")
                 .defaultSuccessUrl("/router/process")
                 .usernameParameter("email")
                 .passwordParameter("password")

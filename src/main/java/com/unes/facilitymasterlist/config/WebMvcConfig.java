@@ -1,27 +1,9 @@
 package com.unes.facilitymasterlist.config;
 
-import org.hibernate.jpa.HibernatePersistenceProvider;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.boot.jdbc.DataSourceBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.config.BeanIds;
-import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.web.firewall.DefaultHttpFirewall;
-import org.springframework.security.web.firewall.HttpFirewall;
-import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
-import org.thymeleaf.extras.springsecurity5.dialect.SpringSecurityDialect;
-import org.thymeleaf.templateresolver.ClassLoaderTemplateResolver;
-
-import javax.sql.DataSource;
-import java.util.Properties;
-
 @Configuration
 public class WebMvcConfig implements WebMvcConfigurer {
 
@@ -30,46 +12,4 @@ public class WebMvcConfig implements WebMvcConfigurer {
         BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder();
         return bCryptPasswordEncoder;
     }
-    @Override
-    public void addResourceHandlers(ResourceHandlerRegistry registry) {
-        registry.addResourceHandler("/resources/**")
-                .addResourceLocations("classpath:/META-INF/resources/webjars/bootstrap/4.0.0/");
-        registry.addResourceHandler("/resources/jquery/**")
-                .addResourceLocations("classpath:/META-INF/resources/webjars/jquery/3.0.0/");
-    }
-    @Bean(name = "db")
-    @ConfigurationProperties(prefix = "spring.datasource")
-    public DataSource dataSource() {
-        return DataSourceBuilder.create().build();
-    }
-
-
-    @Bean(name = "jdbcTemplate")
-    public JdbcTemplate jdbcTemplate(@Qualifier("db") DataSource ds) {
-        return new JdbcTemplate(ds);
-    }
-    @Bean
-    public HttpFirewall allowUrlEncodedSlashHttpFirewall() {
-        DefaultHttpFirewall firewall = new DefaultHttpFirewall();
-        firewall.setAllowUrlEncodedSlash(true);
-        return firewall;
-    }
-    @Bean
-    public SpringSecurityDialect securityDialect() {
-        return new SpringSecurityDialect();
-    }
-
-    @Bean
-    public ClassLoaderTemplateResolver emailTemplateResolver() {
-        ClassLoaderTemplateResolver emailTemplateResolver = new ClassLoaderTemplateResolver();
-        emailTemplateResolver.setPrefix("templates/");
-        emailTemplateResolver.setTemplateMode("HTML5");
-        emailTemplateResolver.setSuffix(".html");
-        emailTemplateResolver.setTemplateMode("XHTML");
-        emailTemplateResolver.setCharacterEncoding("UTF-8");
-        emailTemplateResolver.setOrder(1);
-        return emailTemplateResolver;
-    }
-
-
 }
